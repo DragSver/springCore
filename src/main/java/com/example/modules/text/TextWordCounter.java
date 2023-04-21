@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class TextCaesarsCipher implements Module {
+public class TextWordCounter implements Module {
     @Override
     public boolean supports(String format) {
         return "txt".equals(format);
@@ -15,7 +15,7 @@ public class TextCaesarsCipher implements Module {
 
     @Override
     public String description() {
-        return "Описание вашей собственной функции.";
+        return "Вывод частоты вхождения каждого слова в текстовом файле.";
     }
 
     @Override
@@ -24,7 +24,7 @@ public class TextCaesarsCipher implements Module {
         Map<String, Integer> wordCount = new HashMap<>();
 
         try {
-            reader = new BufferedReader(new FileReader(fileName));
+            reader = new BufferedReader(new FileReader(file.getPath()));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] words = line.split("\\s+");
@@ -39,8 +39,6 @@ public class TextCaesarsCipher implements Module {
             for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
                 System.out.println(entry.getKey() + " " + entry.getValue());
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e){
             e.printStackTrace();
         } finally {

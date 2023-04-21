@@ -1,6 +1,6 @@
-package modules.image;
+package com.example.modules.image;
 
-import modules.Module;
+import com.example.modules.Module;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

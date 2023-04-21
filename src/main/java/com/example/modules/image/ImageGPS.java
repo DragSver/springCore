@@ -1,15 +1,15 @@
 package com.example.modules.image;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.GpsDirectory;
 import com.example.modules.Module;
-//import com.example.thumbnailator.main.java.net.coobird.thumbnailator.Thumbnails;
 
 import javax.imageio.ImageIO;
 import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
 
 
-public class ImageCustomFunction implements Module {
+public class ImageGPS implements Module {
     @Override
     public boolean supports(String format) {
         return ImageIO.getImageReadersBySuffix(format).hasNext();
@@ -17,39 +17,34 @@ public class ImageCustomFunction implements Module {
 
     @Override
     public String description() {
-        return "Описание вашей собственной функции.";
+        return "Вывод GPS данных изображения.";
     }
 
     @Override
     public void process(File file) {
-        Scanner scanner = new Scanner(System.in);
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(file);
 
-        // Запрашиваем новые размеры изображения
-        System.out.print("Введите новую ширину изображения: ");
-        int newWidth = scanner.nextInt();
-        System.out.print("Введите новую высоту изображения: ");
-        int newHeight = scanner.nextInt();
-
-        // Указывем путь для сохранения обработанного изображения
-        File outputFile = new File("path/to/output/" + file.getName() + newWidth + "x" + newHeight + ".jpg");
-
-        // Вызываем функцию для изменения размера изображения
-        resize(file, outputFile, newWidth, newHeight);
-
-        scanner.close();
-    }
-
-    public static void resize(File inputFile, File outputFile, int newWidth, int newHeight) {
-//        try {
-//            // Изменяем размер изображения
-//            Thumbnails.of(inputFile).size(newWidth, newHeight).toFile(outputFile);
-//
-//            System.out.format("Изображение %s было успешно изменено до %dx%d пикселей.%n",
-//                    outputFile.getName(), newWidth, newHeight);
-//
-//        } catch (IOException e) {
-//            System.err.format("Произошла ошибка при изменении размера изображения %s.%n", inputFile.getName());
-//            e.printStackTrace();
-//        }
+            GpsDirectory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            if (gpsDirectory != null) {
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_LATITUDE_REF) + ": " + gpsDirectory.getString(GpsDirectory.TAG_LATITUDE_REF));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_LONGITUDE_REF) + ": " + gpsDirectory.getString(GpsDirectory.TAG_LONGITUDE_REF));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_LATITUDE) + ": " + gpsDirectory.getString(GpsDirectory.TAG_LATITUDE));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_LONGITUDE) + ": " + gpsDirectory.getString(GpsDirectory.TAG_LONGITUDE));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_ALTITUDE_REF) + ": " + gpsDirectory.getString(GpsDirectory.TAG_ALTITUDE_REF));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_ALTITUDE) + ": " + gpsDirectory.getString(GpsDirectory.TAG_ALTITUDE));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_MAP_DATUM) + ": " + gpsDirectory.getString(GpsDirectory.TAG_MAP_DATUM));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_SPEED_REF) + ": " + gpsDirectory.getString(GpsDirectory.TAG_SPEED_REF));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_SPEED) + ": " + gpsDirectory.getString(GpsDirectory.TAG_SPEED));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_IMG_DIRECTION_REF) + ": " + gpsDirectory.getString(GpsDirectory.TAG_IMG_DIRECTION_REF));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_IMG_DIRECTION) + ": " + gpsDirectory.getString(GpsDirectory.TAG_IMG_DIRECTION));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_DATE_STAMP) + ": " + gpsDirectory.getString(GpsDirectory.TAG_DATE_STAMP));
+                System.out.println(gpsDirectory.getTagName(GpsDirectory.TAG_TIME_STAMP) + ": " + gpsDirectory.getString(GpsDirectory.TAG_TIME_STAMP));
+            } else {
+                System.out.println("Нет данных.");
+            }
+        } catch (Exception e) {
+            System.err.println("Error reading metadata: " + e.getMessage());
+        }
     }
 }

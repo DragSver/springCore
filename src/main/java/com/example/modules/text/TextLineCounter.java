@@ -1,8 +1,11 @@
-package modules.text;
+package com.example.modules.text;
 
-import modules.Module;
+import com.example.modules.Module;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class TextLineCounter implements Module {
     @Override
@@ -17,6 +20,14 @@ public class TextLineCounter implements Module {
 
     @Override
     public void process(File file) {
-        // Реализуйте метод для подсчета строк в файле
+        int lineCount = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(file.getPath()))) {
+            while ((br.readLine()) != null) {
+                lineCount++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Количество строк в файле: " + lineCount);
     }
 }

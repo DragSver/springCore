@@ -3,9 +3,8 @@ package com.example.modules.directory;
 import com.example.modules.Module;
 
 import java.io.File;
-import java.util.Arrays;
 
-public class DirectoryListing implements Module {
+public class DirectoryFileSize implements Module {
     @Override
     public boolean supports(String format) {
         return format.equalsIgnoreCase("dir");
@@ -13,18 +12,27 @@ public class DirectoryListing implements Module {
 
     @Override
     public String description() {
-        return "Вывод списка файлов в каталоге.";
+        return "Подсчет размера всех файлов в каталоге.";
     }
 
     @Override
     public void process(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files != null) {
-                Arrays.stream(files).forEach(f -> System.out.println(f.getName()));
+        long totalSize = calculateFolderSize(file);
+        System.out.println("Размер каталога в байтах: " + totalSize);
+    }
+
+    public static long calculateFolderSize(File directory) {
+        long length = 0;
+        File[] files = directory.listFiles();
+
+        for (File file : files) {
+            if (file.isFile()) {
+                length += file.length();
+            } else {
+                length += calculateFolderSize(file);
             }
-        } else {
-            System.out.println(file.getName() + " не является директорией.");
         }
+
+        return length;
     }
 }

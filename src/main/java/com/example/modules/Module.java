@@ -1,4 +1,4 @@
-package modules;
+package com.example.modules;
 
 import java.io.File;
 

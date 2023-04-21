@@ -1,6 +1,9 @@
-package modules.image;
+package com.example.modules.image;
 
-import modules.Module;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.example.modules.Module;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -18,6 +21,18 @@ public class ImageExif implements Module {
 
     @Override
     public void process(File file) {
-        // Реализуйте метод для чтения и вывода EXIF данных изображения
+            try {
+            Metadata metadata = ImageMetadataReader.readMetadata(file);
+
+            ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            if (exifIFD0Directory != null) {
+                System.out.println("Camera make: " + exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
+                System.out.println("Camera model: " + exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
+            } else {
+                System.out.println("Нет данных.");
+            }
+        } catch (Exception e) {
+            System.err.println("Error reading metadata: " + e.getMessage());
+        }
     }
 }
